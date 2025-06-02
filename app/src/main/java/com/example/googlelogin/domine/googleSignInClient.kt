@@ -90,7 +90,7 @@ class GoogleAuthClient(
             .addCredentialOption(
                 GetGoogleIdOption.Builder()
                     .setFilterByAuthorizedAccounts(false)
-                    .setServerClientId("792548933114-vqts0a7vdc54buenk3e1dohh5q7924hc.apps.googleusercontent.com")
+                    .setServerClientId("YOUR_WEB_CLIENT_ID")
                     .setAutoSelectEnabled(false)
                     .build()
             )
