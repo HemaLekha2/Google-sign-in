@@ -1,41 +1,41 @@
 {
   "project_info": {
     "project_number": "000000000000",
-    "project_id": "your-project-id",
-    "storage_bucket": "your-project-id.appspot.com"
+    "project_id": "login-demo",
+    "storage_bucket": "login-demo.appspot.com"
   },
   "client": [
     {
       "client_info": {
         "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
         "android_client_info": {
-          "package_name": "com.example.yourapp"
+          "package_name": "com.example.googlelogin"
         }
       },
       "oauth_client": [
         {
-          "client_id": "000000000000-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com",
+          "client_id": "000000000000-android-client-id.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.yourapp",
+            "package_name": "com.example.googlelogin",
             "certificate_hash": "0000000000000000000000000000000000000000"
           }
         },
         {
-          "client_id": "000000000000-yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy.apps.googleusercontent.com",
+          "client_id": "000000000000-web-client-id.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDUMMY-KEY-REPLACED-FOR-SAFETY"
+          "current_key": "AIzaSyDUMMY-KEY-REMOVED-FOR-SECURITY"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "000000000000-yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy.apps.googleusercontent.com",
+              "client_id": "000000000000-web-client-id.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
