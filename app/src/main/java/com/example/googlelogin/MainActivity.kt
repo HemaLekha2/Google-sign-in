@@ -4,23 +4,17 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import com.example.googlelogin.domine.GoogleAuthClient
+import com.example.googlelogin.presentation.MainScreen
+import com.example.googlelogin.presentation.UserData
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -31,55 +25,56 @@ class MainActivity : ComponentActivity() {
         val googleAuthClient = GoogleAuthClient(applicationContext)
 
         setContent {
+            MaterialTheme {
+                var isSignedIn by rememberSaveable { mutableStateOf(false) }
+                var isLoading by rememberSaveable { mutableStateOf(false) }
+                var userData by rememberSaveable { mutableStateOf<UserData?>(null) }
 
-                var isSignIn by rememberSaveable {
-                    mutableStateOf(googleAuthClient.isSingedIn())
-                }
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (isSignIn) {
-
-                        OutlinedButton(onClick = {
-                            lifecycleScope.launch {
-                                googleAuthClient.signOut()
-                                isSignIn = false
-                            }
-                        }) {
-                            Text(
-                                text = "Sign Out",
-                                fontSize = 16.sp,
-                                modifier = Modifier.padding(
-                                    horizontal = 24.dp, vertical = 4.dp
-                                )
-                            )
-                        }
-
-                    } else {
-
-                        OutlinedButton(onClick = {
-                            lifecycleScope.launch {
-                                isSignIn = googleAuthClient.signIn(this@MainActivity)
-
-                            }
-                        }) {
-                            Text(
-                                text = "Sign In With Google",
-                                fontSize = 16.sp,
-                                modifier = Modifier.padding(
-                                    horizontal = 24.dp, vertical = 4.dp
-                                )
-                            )
-                        }
-
+                // Initialize authentication state
+                LaunchedEffect(Unit) {
+                    isSignedIn = googleAuthClient.isSingedIn()
+                    if (isSignedIn) {
+                        // Get actual user data from Firebase
+                        val currentUser = FirebaseAuth.getInstance().currentUser
+                        userData = UserData(
+                            name = currentUser?.displayName,
+                            email = currentUser?.email,
+                            profilePicture = currentUser?.photoUrl?.toString()
+                        )
                     }
                 }
+
+                MainScreen(
+                    isSignedIn = isSignedIn,
+                    isLoading = isLoading,
+                    userData = userData,
+                    onSignInClick = {
+                        isLoading = true
+                        lifecycleScope.launch {
+                            val success = googleAuthClient.signIn(this@MainActivity)
+                            if (success) {
+                                val currentUser = FirebaseAuth.getInstance().currentUser
+                                userData = UserData(
+                                    name = currentUser?.displayName,
+                                    email = currentUser?.email,
+                                    profilePicture = currentUser?.photoUrl?.toString()
+                                )
+                            }
+                            isSignedIn = success
+                            isLoading = false
+                        }
+                    },
+                    onSignOutClick = {
+                        isLoading = true
+                        lifecycleScope.launch {
+                            googleAuthClient.signOut()
+                            isSignedIn = false
+                            userData = null
+                            isLoading = false
+                        }
+                    }
+                )
+            }
         }
     }
 }
-
-
